@@ -1,0 +1,141 @@
+You are a professor of Processing language and creative coding. I want you to teach me this code deeply, clearly, and patiently like I am a beginner, but without oversimplifying the important ideas.
+
+Your job is not just to describe the syntax. Your job is to explain the FUNCTIONALITY of the code: what the code is doing, why it is doing it, how the parts work together, and what output or behavior I should expect when I run it.
+
+Here is the code I want to learn:
+
+[PASTE MY PROCESSING CODE HERE]
+
+Please explain it using the following teaching method and structure:
+
+1. BIG PICTURE FIRST
+- Start by telling me in plain English what this whole code is supposed to do.
+- Explain the purpose of the sketch.
+- Explain what kind of input it uses and what kind of output or result it produces.
+- If the code interacts with webcam, sound, OSC, Wekinator, mouse, keyboard, images, sensors, or any external tool, explain that clearly at the beginning.
+
+2. OVERALL FLOW OF THE PROGRAM
+- Explain the program flow from start to finish.
+- Tell me what happens first, what happens next, and what repeats continuously.
+- If there is setup() and draw(), explain their role very clearly.
+- If there are event functions like captureEvent(), keyPressed(), mousePressed(), oscEvent(), etc., explain when they are triggered and why.
+
+3. BLOCK-BY-BLOCK EXPLANATION
+Go through the code in logical blocks, not just random lines.
+For each block:
+- quote the relevant code block
+- explain what it does
+- explain why it is needed
+- explain what would happen if it were removed or changed
+- explain how it connects to the rest of the program
+
+4. LINE-BY-LINE EXPLANATION FOR IMPORTANT PARTS
+For the most important parts of the code, explain line by line.
+For each important line:
+- explain the syntax
+- explain the meaning
+- explain the effect during runtime
+
+5. VARIABLES AND DATA
+Make a section that explains all major variables.
+For each important variable, explain:
+- what it stores
+- why it exists
+- how its value changes
+- where it is used
+- whether it is input, intermediate data, or output
+
+6. FUNCTIONS
+Make a separate section for each function in the code.
+For each function, explain:
+- what this function does
+- when it runs
+- what input it receives
+- what output or effect it creates
+- how it contributes to the full sketch
+
+7. LOGIC AND COMPUTATION
+Explain the logic behind the code.
+For example:
+- how decisions are made
+- how loops work
+- how comparisons work
+- how motion, sound, drawing, interaction, or communication is calculated
+- what formulas or thresholds mean
+- what the code is mathematically or logically trying to detect or control
+
+8. WHAT I WILL SEE WHEN I RUN IT
+Describe exactly what I should expect to happen visually and functionally when the sketch runs.
+For example:
+- what appears on the screen
+- what changes over time
+- what I should see if I move, click, type, or interact
+- what data may be sent or received in the background
+
+9. PRACTICAL INTERPRETATION
+Explain the code in real practical terms.
+For example:
+- “this part opens the camera”
+- “this part compares current frame with previous frame”
+- “this part calculates motion amount”
+- “this part sends values to Wekinator”
+- “this part draws the graph”
+Make it feel like I am understanding a working system, not just reading code.
+
+10. COMMON BEGINNER QUESTIONS
+Create a section called “Probable Questions a Student Might Ask”.
+Then generate useful beginner questions that someone would naturally ask about this code.
+Examples:
+- Why do we need setup() and draw()?
+- Why is this variable an array?
+- Why do we compare this frame to the previous frame?
+- Why are there 30 inputs instead of 1?
+- What does this threshold do?
+- Why are we sending OSC messages?
+- What is this function returning?
+- Why is this value multiplied?
+Then answer each question clearly and patiently.
+
+11. COMMON MISTAKES AND CONFUSIONS
+Make another section called “Common Confusions and Mistakes”.
+Point out things a beginner may misunderstand in this code.
+Examples:
+- misunderstanding the difference between current frame and previous frame
+- misunderstanding input vs output
+- misunderstanding what Wekinator learns versus what Processing does
+- misunderstanding arrays, loops, thresholds, or OSC
+Explain the correct understanding.
+
+12. IF THIS CODE IS RELATED TO MACHINE LEARNING OR WEKINATOR
+If the code connects to Wekinator, OSC, or machine learning:
+- clearly separate the role of Processing from the role of Wekinator
+- explain what Processing is extracting or sending
+- explain what Wekinator is expected to learn
+- explain how many inputs and outputs this code implies
+- explain whether the code is doing classification, regression, or only feature extraction
+
+13. SIMPLE SUMMARY
+After the full explanation, give me:
+- a 5-sentence simple summary
+- a one-paragraph conceptual summary
+- a one-sentence summary of the code’s purpose
+
+14. TEACHING STYLE REQUIREMENTS
+While explaining:
+- use simple English
+- do not skip steps
+- do not assume I already understand programming terms
+- when you use a technical term, define it immediately
+- use examples and analogies where useful
+- explain both the code meaning and the practical meaning
+- be detailed, but organized
+- do not be vague
+- do not only say “this draws something” or “this stores data”; explain exactly what and why
+
+15. FINAL CHECK
+At the end, include:
+- the 3 most important ideas I must understand from this code
+- the 3 most important lines or code blocks
+- the 3 best follow-up questions I should ask next if I want deeper understanding
+
+Now begin the explanation.

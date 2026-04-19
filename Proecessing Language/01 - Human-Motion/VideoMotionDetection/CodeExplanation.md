@@ -3,9 +3,9 @@
 ## The code we are studying
 
 ```java
-import processing.video.*;
-import oscP5.*;
-import netP5.*;
+import processing.video.;
+import oscP5.;
+import netP5.;
 
 Capture cam;
 PImage prevFrame;
@@ -13,23 +13,23 @@ PImage prevFrame;
 OscP5 oscP5;
 NetAddress wekinator;
 
-// Wekinator
-String wekHost = "127.0.0.1";
+ Wekinator
+String wekHost = 127.0.0.1;
 int wekPort = 6448;
-String oscAddress = "/wek/inputs";
+String oscAddress = wekinputs;
 
-// OSC local port
+ OSC local port
 int localPort = 12001;
 
-// motion detection
-float threshold = 30;   // color pixel threshold to asses a motion
+ motion detection
+float threshold = 30;    color pixel threshold to asses a motion
 float motionAmount = 0;
 
-// temporal buffer
+ temporal buffer
 int bufferSize = 30;
 float[] motionBuffer = new float[bufferSize];
 
-// image mirroring
+ image mirroring
 boolean mirror = true;
 
 void setup() {
@@ -40,20 +40,20 @@ void setup() {
 
   String[] cameras = Capture.list();
 
-  if (cameras == null || cameras.length == 0) {
-    println("No cam found");
+  if (cameras == null  cameras.length == 0) {
+    println(No cam found);
     exit();
   }
 
-  println("Evailable cameras:");
-  for (int i = 0; i < cameras.length; i++) {
-    println(i + ": " + cameras[i]);
+  println(Evailable cameras);
+  for (int i = 0; i  cameras.length; i++) {
+    println(i +   + cameras[i]);
   }
 
   cam = new Capture(this, cameras[0]);
   cam.start();
 
-  textFont(createFont("Arial", 14));
+  textFont(createFont(Arial, 14));
 }
 
 void captureEvent(Capture c) {
@@ -75,7 +75,7 @@ void draw() {
   int whiteCount = 0;
   int sampledCount = 0;
 
-  // visual webcam
+   visual webcam
   pushMatrix();
   if (mirror) {
     translate(width, 0);
@@ -84,10 +84,10 @@ void draw() {
   image(cam, 0, 0, width, height);
   popMatrix();
 
-  // ompute the difference with the previous frame
-  for (int y = 0; y < cam.height; y++) {
-    for (int x = 0; x < cam.width; x++) {
-      int index = x + y * cam.width;
+   ompute the difference with the previous frame
+  for (int y = 0; y  cam.height; y++) {
+    for (int x = 0; x  cam.width; x++) {
+      int index = x + y  cam.width;
 
       color c1 = cam.pixels[index];
       color c2 = prevFrame.pixels[index];
@@ -97,30 +97,30 @@ void draw() {
 
       float diff = abs(b1 - b2);
 
-      if (diff > threshold) {
+      if (diff  threshold) {
         whiteCount++;
       }
       sampledCount++;
     }
   }
 
-  // normalized quantity of movement 0..1 (weaighted by a factor)
-  motionAmount = ((float)whiteCount / (float)sampledCount)*4;
+   normalized quantity of movement 0..1 (weaighted by a factor)
+  motionAmount = ((float)whiteCount  (float)sampledCount)4;
 
-  // update temporal buffer
+   update temporal buffer
   updateMotionBuffer(motionAmount);
   sendBufferToWekinator();
 
-  // save current frame
+   save current frame
   prevFrame = cam.get();
 
-  // GUI
+   GUI
   drawHUD();
   drawBufferPreview();
 }
 
 void updateMotionBuffer(float value) {
-  for (int i = 0; i < bufferSize - 1; i++) {
+  for (int i = 0; i  bufferSize - 1; i++) {
     motionBuffer[i] = motionBuffer[i + 1];
   }
   motionBuffer[bufferSize - 1] = value;
@@ -129,7 +129,7 @@ void updateMotionBuffer(float value) {
 void sendBufferToWekinator() {
   OscMessage msg = new OscMessage(oscAddress);
 
-  for (int i = 0; i < bufferSize; i++) {
+  for (int i = 0; i  bufferSize; i++) {
     msg.add(motionBuffer[i]);
   }
 
@@ -142,10 +142,10 @@ void drawHUD() {
   rect(10, 10, 320, 110);
 
   fill(255);
-  text("OSC -> " + wekHost + ":" + wekPort, 20, 35);
-  text("Address: " + oscAddress, 20, 55);
-  text("Motion amount: " + nf(motionAmount, 1, 4), 20, 75);
-  text("Features sent: " + bufferSize, 20, 115);
+  text(OSC -  + wekHost +  + wekPort, 20, 35);
+  text(Address  + oscAddress, 20, 55);
+  text(Motion amount  + nf(motionAmount, 1, 4), 20, 75);
+  text(Features sent  + bufferSize, 20, 115);
 }
 
 void drawBufferPreview() {
@@ -165,7 +165,7 @@ void drawBufferPreview() {
   noFill();
   stroke(0, 255, 0);
   beginShape();
-  for (int i = 0; i < bufferSize; i++) {
+  for (int i = 0; i  bufferSize; i++) {
     float x = map(i, 0, bufferSize - 1, gx, gx + gw);
     float y = map(motionBuffer[i], 0, 1, gy + gh, gy);
     vertex(x, y);
@@ -173,7 +173,7 @@ void drawBufferPreview() {
   endShape();
 
   fill(255);
-  text("Motion buffer (last " + bufferSize + " frames)", gx, gy - 8);
+  text(Motion buffer (last  + bufferSize +  frames), gx, gy - 8);
 }
 ```
 
@@ -183,8 +183,8 @@ void drawBufferPreview() {
 
 In plain English, this sketch opens your webcam, watches how much the image changes from one frame to the next, turns that change into a motion value, stores the last 30 motion values, and sends those 30 numbers to Wekinator through OSC.
 
-So this code is **not** doing machine learning by itself.
-Its main job is to:
+So this code is not doing machine learning by itself.
+Its main job is to
 
 1. get live video from the webcam,
 2. measure motion in that video,
@@ -194,50 +194,50 @@ Its main job is to:
 
 ### Purpose of the sketch
 
-The purpose is to create a **motion feature extractor**.
-A feature extractor is a program that takes raw input (here: webcam video) and turns it into numbers that another system can learn from.
+The purpose is to create a motion feature extractor.
+A feature extractor is a program that takes raw input (here webcam video) and turns it into numbers that another system can learn from.
 
-Here, the extracted feature is not the whole image. Instead, it is:
+Here, the extracted feature is not the whole image. Instead, it is
 
-* one motion amount per frame,
-* stored across the last 30 frames,
-* resulting in **30 input values**.
+ one motion amount per frame,
+ stored across the last 30 frames,
+ resulting in 30 input values.
 
 ### What kind of input it uses
 
-This sketch uses:
+This sketch uses
 
-* **webcam input** from your camera,
-* the current frame and previous frame,
-* OSC networking to send data out.
+ webcam input from your camera,
+ the current frame and previous frame,
+ OSC networking to send data out.
 
 ### What kind of output it produces
 
-It produces two kinds of output:
+It produces two kinds of output
 
 #### Visual output on screen
 
-* the live webcam image,
-* a HUD (heads-up display) showing motion and OSC information,
-* a graph of the last 30 motion values.
+ the live webcam image,
+ a HUD (heads-up display) showing motion and OSC information,
+ a graph of the last 30 motion values.
 
 #### Data output in the background
 
-* an OSC message sent to Wekinator,
-* containing **30 floating-point values**,
-* one for each slot in the motion buffer.
+ an OSC message sent to Wekinator,
+ containing 30 floating-point values,
+ one for each slot in the motion buffer.
 
 ### External tools involved
 
-This sketch uses:
+This sketch uses
 
-* **webcam**: to capture live video,
-* **OSC**: Open Sound Control, a protocol for sending data between programs,
-* **Wekinator**: receives the 30 motion values and learns from them if you train it.
+ webcam to capture live video,
+ OSC Open Sound Control, a protocol for sending data between programs,
+ Wekinator receives the 30 motion values and learns from them if you train it.
 
-So the practical system is:
+So the practical system is
 
-**Camera → Processing → motion features → OSC → Wekinator**
+Camera → Processing → motion features → OSC → Wekinator
 
 ---
 
@@ -247,25 +247,25 @@ Let us follow the full life of the sketch from beginning to continuous running.
 
 ## What happens first
 
-When the sketch starts, `setup()` runs **once**.
+When the sketch starts, `setup()` runs once.
 
-Inside `setup()` the program:
+Inside `setup()` the program
 
-* creates the window,
-* starts OSC communication,
-* prepares the Wekinator address,
-* checks which cameras are available,
-* chooses the first camera,
-* starts the camera,
-* sets the font for text display.
+ creates the window,
+ starts OSC communication,
+ prepares the Wekinator address,
+ checks which cameras are available,
+ chooses the first camera,
+ starts the camera,
+ sets the font for text display.
 
 ## What happens when camera frames arrive
 
 Whenever the camera has a fresh frame ready, `captureEvent(Capture c)` runs.
 
-That function calls `c.read();`, which tells Processing:
+That function calls `c.read();`, which tells Processing
 
-> “Take the newest camera frame and store it so the sketch can use it.”
+ “Take the newest camera frame and store it so the sketch can use it.”
 
 Without this, the image would not update correctly.
 
@@ -273,7 +273,7 @@ Without this, the image would not update correctly.
 
 After setup finishes, `draw()` runs over and over again, many times per second.
 
-Each time `draw()` runs, the sketch:
+Each time `draw()` runs, the sketch
 
 1. clears the background,
 2. loads the pixels of the current camera image,
@@ -298,21 +298,21 @@ This is where you create objects, start devices, and configure the sketch.
 ### `draw()`
 
 Runs repeatedly in a loop.
-Use it for everything that must update continuously, such as:
+Use it for everything that must update continuously, such as
 
-* reading live input,
-* analyzing motion,
-* drawing graphics,
-* sending updated values.
+ reading live input,
+ analyzing motion,
+ drawing graphics,
+ sending updated values.
 
 ## Role of `captureEvent()`
 
-This is an **event function**.
+This is an event function.
 An event function is a function that runs automatically when a certain event happens.
 
-Here, the event is:
+Here, the event is
 
-* “the camera has a new frame ready.”
+ “the camera has a new frame ready.”
 
 So `captureEvent()` is not called manually by you.
 Processing calls it automatically.
@@ -324,18 +324,18 @@ Processing calls it automatically.
 ## Block A — Library imports
 
 ```java
-import processing.video.*;
-import oscP5.*;
-import netP5.*;
+import processing.video.;
+import oscP5.;
+import netP5.;
 ```
 
 ### What it does
 
 This loads external libraries.
 
-* `processing.video.*` gives webcam access.
-* `oscP5.*` lets the sketch create and send OSC messages.
-* `netP5.*` helps define network destinations such as IP address and port.
+ `processing.video.` gives webcam access.
+ `oscP5.` lets the sketch create and send OSC messages.
+ `netP5.` helps define network destinations such as IP address and port.
 
 ### Why it is needed
 
@@ -343,8 +343,8 @@ Without these libraries, the code would not understand camera capture or OSC com
 
 ### If removed
 
-* remove video import → webcam code fails,
-* remove OSC imports → networking code fails.
+ remove video import → webcam code fails,
+ remove OSC imports → networking code fails.
 
 ### How it connects to the sketch
 
@@ -366,10 +366,10 @@ NetAddress wekinator;
 
 This declares the major objects used later.
 
-* `cam` represents the webcam stream.
-* `prevFrame` stores the previous frame image.
-* `oscP5` manages OSC communication.
-* `wekinator` stores the network destination of Wekinator.
+ `cam` represents the webcam stream.
+ `prevFrame` stores the previous frame image.
+ `oscP5` manages OSC communication.
+ `wekinator` stores the network destination of Wekinator.
 
 ### Why it is needed
 
@@ -378,8 +378,8 @@ Without them there is no camera, no previous frame, and no OSC sending.
 
 ### If removed or changed
 
-* remove `prevFrame` → no frame comparison, so no motion detection,
-* remove `wekinator` → the sketch cannot know where to send OSC data.
+ remove `prevFrame` → no frame comparison, so no motion detection,
+ remove `wekinator` → the sketch cannot know where to send OSC data.
 
 ### Connection to the rest
 
@@ -390,9 +390,9 @@ Nearly every important part of the program depends on these objects.
 ## Block C — Wekinator communication settings
 
 ```java
-String wekHost = "127.0.0.1";
+String wekHost = 127.0.0.1;
 int wekPort = 6448;
-String oscAddress = "/wek/inputs";
+String oscAddress = wekinputs;
 
 int localPort = 12001;
 ```
@@ -401,18 +401,18 @@ int localPort = 12001;
 
 This defines where OSC messages should go and which local port Processing should use.
 
-* `wekHost = "127.0.0.1"` means “send to this same computer.”
-* `wekPort = 6448` is the port Wekinator listens on.
-* `oscAddress = "/wek/inputs"` is the OSC address pattern expected by Wekinator.
-* `localPort = 12001` is the port on which this sketch creates its OSC object.
+ `wekHost = 127.0.0.1` means “send to this same computer.”
+ `wekPort = 6448` is the port Wekinator listens on.
+ `oscAddress = wekinputs` is the OSC address pattern expected by Wekinator.
+ `localPort = 12001` is the port on which this sketch creates its OSC object.
 
 ### Why it is needed
 
-Network communication only works if both sides agree on:
+Network communication only works if both sides agree on
 
-* host,
-* port,
-* OSC address.
+ host,
+ port,
+ OSC address.
 
 ### If changed
 
@@ -433,8 +433,8 @@ float motionAmount = 0;
 
 ### What it does
 
-* `threshold` decides when a pixel change is large enough to count as motion.
-* `motionAmount` stores the final motion value computed for the current frame.
+ `threshold` decides when a pixel change is large enough to count as motion.
+ `motionAmount` stores the final motion value computed for the current frame.
 
 ### Why it is needed
 
@@ -442,8 +442,8 @@ When comparing two frames, tiny changes can happen because of noise, lighting fl
 
 ### If threshold is removed or set badly
 
-* too low → almost everything counts as motion,
-* too high → real movement may be ignored.
+ too low → almost everything counts as motion,
+ too high → real movement may be ignored.
 
 ### Connection to the rest
 
@@ -469,12 +469,12 @@ The array stores the last 30 motion values.
 One motion value from one frame is often too limited.
 A short history across time gives Wekinator more information.
 
-For example:
+For example
 
-* steady stillness,
-* one sudden movement,
-* repeated waving,
-* gradual increase in motion,
+ steady stillness,
+ one sudden movement,
+ repeated waving,
+ gradual increase in motion,
 
 all become different patterns when seen over 30 frames.
 
@@ -506,7 +506,7 @@ When you move your right hand, the image appears to move as you expect.
 
 ### Important detail
 
-This affects the **display**, not the motion calculation logic itself. The motion is calculated from the camera pixels, not from the mirrored drawing on screen.
+This affects the display, not the motion calculation logic itself. The motion is calculated from the camera pixels, not from the mirrored drawing on screen.
 
 ---
 
@@ -521,20 +521,20 @@ void setup() {
 
   String[] cameras = Capture.list();
 
-  if (cameras == null || cameras.length == 0) {
-    println("No cam found");
+  if (cameras == null  cameras.length == 0) {
+    println(No cam found);
     exit();
   }
 
-  println("Evailable cameras:");
-  for (int i = 0; i < cameras.length; i++) {
-    println(i + ": " + cameras[i]);
+  println(Evailable cameras);
+  for (int i = 0; i  cameras.length; i++) {
+    println(i +   + cameras[i]);
   }
 
   cam = new Capture(this, cameras[0]);
   cam.start();
 
-  textFont(createFont("Arial", 14));
+  textFont(createFont(Arial, 14));
 }
 ```
 
@@ -544,12 +544,12 @@ This prepares the whole sketch.
 
 ### Why it is needed
 
-The sketch cannot run properly unless it:
+The sketch cannot run properly unless it
 
-* opens a window,
-* prepares OSC,
-* finds a camera,
-* starts the camera.
+ opens a window,
+ prepares OSC,
+ finds a camera,
+ starts the camera.
 
 ### If removed
 
@@ -603,16 +603,16 @@ void draw() {
 
 ### What it does
 
-* clears the window to black,
-* loads current camera pixels,
-* if there is no previous frame yet, saves the current frame as the first previous frame and stops this draw cycle.
+ clears the window to black,
+ loads current camera pixels,
+ if there is no previous frame yet, saves the current frame as the first previous frame and stops this draw cycle.
 
 ### Why it is needed
 
-Motion detection needs **two frames**:
+Motion detection needs two frames
 
-* current frame,
-* previous frame.
+ current frame,
+ previous frame.
 
 On the very first draw cycle, there is no previous frame yet.
 So the sketch stores one and waits for the next cycle.
@@ -642,35 +642,35 @@ The program would try to compare the current frame to `null`, which would cause 
 
 ### What it does
 
-* loads previous frame pixels,
-* creates counters,
-* draws the camera image,
-* optionally mirrors it.
+ loads previous frame pixels,
+ creates counters,
+ draws the camera image,
+ optionally mirrors it.
 
 ### Why it is needed
 
-* `whiteCount` counts how many pixels changed enough.
-* `sampledCount` counts how many pixels were tested in total.
-* the image drawing gives visual feedback.
+ `whiteCount` counts how many pixels changed enough.
+ `sampledCount` counts how many pixels were tested in total.
+ the image drawing gives visual feedback.
 
 ### If removed
 
-You would lose the counting logic and/or the live camera display.
+You would lose the counting logic andor the live camera display.
 
 ### Practical meaning
 
-This is the point where the sketch prepares to ask:
+This is the point where the sketch prepares to ask
 
-> “Out of all pixels, how many changed a lot?”
+ “Out of all pixels, how many changed a lot”
 
 ---
 
 ## Block K — Pixel-by-pixel motion detection
 
 ```java
-  for (int y = 0; y < cam.height; y++) {
-    for (int x = 0; x < cam.width; x++) {
-      int index = x + y * cam.width;
+  for (int y = 0; y  cam.height; y++) {
+    for (int x = 0; x  cam.width; x++) {
+      int index = x + y  cam.width;
 
       color c1 = cam.pixels[index];
       color c2 = prevFrame.pixels[index];
@@ -680,7 +680,7 @@ This is the point where the sketch prepares to ask:
 
       float diff = abs(b1 - b2);
 
-      if (diff > threshold) {
+      if (diff  threshold) {
         whiteCount++;
       }
       sampledCount++;
@@ -692,7 +692,7 @@ This is the point where the sketch prepares to ask:
 
 This is the heart of the motion detector.
 
-For every pixel position:
+For every pixel position
 
 1. find the pixel in the current frame,
 2. find the pixel at the same position in the previous frame,
@@ -712,39 +712,39 @@ There would be no motion calculation at all.
 
 ### Practical meaning
 
-This is basically asking millions of tiny questions like:
+This is basically asking millions of tiny questions like
 
-> “Did this pixel change enough to matter?”
+ “Did this pixel change enough to matter”
 
 ---
 
 ## Block L — Convert counts into one motion value
 
 ```java
-  motionAmount = ((float)whiteCount / (float)sampledCount)*4;
+  motionAmount = ((float)whiteCount  (float)sampledCount)4;
 ```
 
 ### What it does
 
 This computes the fraction of changed pixels.
 
-Formula:
+Formula
 
-`motionAmount = changedPixels / totalPixels * 4`
+`motionAmount = changedPixels  totalPixels  4`
 
 ### Why it is needed
 
 `whiteCount` alone depends on camera resolution. A larger image would naturally have more changed pixels.
 By dividing by total pixels, the code creates a normalized value.
 
-### Why multiply by 4?
+### Why multiply by 4
 
 This scales the result upward.
 It makes the motion values larger and possibly more useful or responsive for Wekinator and the graph.
 
 ### Important note
 
-The comment says `0..1`, but because of `*4`, the value can be greater than 1.
+The comment says `0..1`, but because of `4`, the value can be greater than 1.
 So the comment is not fully accurate.
 That is a very important beginner observation.
 
@@ -759,8 +759,8 @@ That is a very important beginner observation.
 
 ### What it does
 
-* adds the newest motion value to the temporal history,
-* sends the whole history to Wekinator.
+ adds the newest motion value to the temporal history,
+ sends the whole history to Wekinator.
 
 ### Why it is needed
 
@@ -768,8 +768,8 @@ This is where the sketch turns a single moment into a time-series feature vector
 
 ### If removed
 
-* without `updateMotionBuffer()` → history never changes,
-* without `sendBufferToWekinator()` → Wekinator receives nothing.
+ without `updateMotionBuffer()` → history never changes,
+ without `sendBufferToWekinator()` → Wekinator receives nothing.
 
 ### Practical meaning
 
@@ -789,9 +789,9 @@ This is the bridge from motion analysis to machine learning input.
 
 ### What it does
 
-* stores a copy of the current frame to become the previous frame next time,
-* draws text overlay,
-* draws the motion graph.
+ stores a copy of the current frame to become the previous frame next time,
+ draws text overlay,
+ draws the motion graph.
 
 ### Why it is needed
 
@@ -807,7 +807,7 @@ The next frame would not have a proper reference frame to compare with.
 
 ```java
 void updateMotionBuffer(float value) {
-  for (int i = 0; i < bufferSize - 1; i++) {
+  for (int i = 0; i  bufferSize - 1; i++) {
     motionBuffer[i] = motionBuffer[i + 1];
   }
   motionBuffer[bufferSize - 1] = value;
@@ -828,11 +828,11 @@ The 30-value history would never update properly.
 
 ### Practical meaning
 
-Imagine a row of 30 boxes:
+Imagine a row of 30 boxes
 
-* oldest value drops off the left side,
-* everyone else moves left,
-* newest value enters on the right.
+ oldest value drops off the left side,
+ everyone else moves left,
+ newest value enters on the right.
 
 ---
 
@@ -842,7 +842,7 @@ Imagine a row of 30 boxes:
 void sendBufferToWekinator() {
   OscMessage msg = new OscMessage(oscAddress);
 
-  for (int i = 0; i < bufferSize; i++) {
+  for (int i = 0; i  bufferSize; i++) {
     msg.add(motionBuffer[i]);
   }
 
@@ -861,8 +861,8 @@ Without it, Processing would compute features but keep them to itself.
 
 ### If changed
 
-* wrong address → Wekinator may ignore it,
-* wrong number of inputs → Wekinator setup may not match.
+ wrong address → Wekinator may ignore it,
+ wrong number of inputs → Wekinator setup may not match.
 
 ### Practical meaning
 
@@ -879,21 +879,21 @@ void drawHUD() {
   rect(10, 10, 320, 110);
 
   fill(255);
-  text("OSC -> " + wekHost + ":" + wekPort, 20, 35);
-  text("Address: " + oscAddress, 20, 55);
-  text("Motion amount: " + nf(motionAmount, 1, 4), 20, 75);
-  text("Features sent: " + bufferSize, 20, 115);
+  text(OSC -  + wekHost +  + wekPort, 20, 35);
+  text(Address  + oscAddress, 20, 55);
+  text(Motion amount  + nf(motionAmount, 1, 4), 20, 75);
+  text(Features sent  + bufferSize, 20, 115);
 }
 ```
 
 ### What it does
 
-Draws a semi-transparent information box showing:
+Draws a semi-transparent information box showing
 
-* destination IP and port,
-* OSC address,
-* current motion amount,
-* number of features sent.
+ destination IP and port,
+ OSC address,
+ current motion amount,
+ number of features sent.
 
 ### Why it is needed
 
@@ -925,7 +925,7 @@ void drawBufferPreview() {
   noFill();
   stroke(0, 255, 0);
   beginShape();
-  for (int i = 0; i < bufferSize; i++) {
+  for (int i = 0; i  bufferSize; i++) {
     float x = map(i, 0, bufferSize - 1, gx, gx + gw);
     float y = map(motionBuffer[i], 0, 1, gy + gh, gy);
     vertex(x, y);
@@ -933,7 +933,7 @@ void drawBufferPreview() {
   endShape();
 
   fill(255);
-  text("Motion buffer (last " + bufferSize + " frames)", gx, gy - 8);
+  text(Motion buffer (last  + bufferSize +  frames), gx, gy - 8);
 }
 ```
 
@@ -947,7 +947,7 @@ A graph makes it much easier to understand the motion pattern over time.
 
 ### Important detail
 
-The y-axis maps values from `0` to `1`, but the motion value can exceed `1` because of `*4`.
+The y-axis maps values from `0` to `1`, but the motion value can exceed `1` because of `4`.
 So strong motion might go outside the expected graph range.
 That is another important detail a student should notice.
 
@@ -972,34 +972,34 @@ if (prevFrame == null) {
 
 ### `cam.loadPixels();`
 
-* **Syntax:** calls a method on the `cam` object.
-* **Meaning:** make the camera’s pixel data available in the `cam.pixels[]` array.
-* **Runtime effect:** after this line, the code can inspect camera pixels one by one.
+ Syntax calls a method on the `cam` object.
+ Meaning make the camera’s pixel data available in the `cam.pixels[]` array.
+ Runtime effect after this line, the code can inspect camera pixels one by one.
 
 ### `if (prevFrame == null) {`
 
-* **Syntax:** an `if` statement checks a condition.
-* **Meaning:** ask whether a previous frame has not been stored yet.
-* **Runtime effect:** on the first useful frame, this condition is true.
+ Syntax an `if` statement checks a condition.
+ Meaning ask whether a previous frame has not been stored yet.
+ Runtime effect on the first useful frame, this condition is true.
 
 ### `prevFrame = cam.get();`
 
-* **Syntax:** assigns a copy of the current camera image.
-* **Meaning:** save the current frame so it can be used as the “previous” frame next time.
-* **Runtime effect:** initializes motion comparison.
+ Syntax assigns a copy of the current camera image.
+ Meaning save the current frame so it can be used as the “previous” frame next time.
+ Runtime effect initializes motion comparison.
 
 ### `return;`
 
-* **Syntax:** exits the current function immediately.
-* **Meaning:** stop this `draw()` cycle now.
-* **Runtime effect:** avoids comparing current frame to a nonexistent previous frame.
+ Syntax exits the current function immediately.
+ Meaning stop this `draw()` cycle now.
+ Runtime effect avoids comparing current frame to a nonexistent previous frame.
 
 ---
 
 ## Important Part 2 — Pixel difference logic
 
 ```java
-int index = x + y * cam.width;
+int index = x + y  cam.width;
 
 color c1 = cam.pixels[index];
 color c2 = prevFrame.pixels[index];
@@ -1009,40 +1009,40 @@ float b2 = brightness(c2);
 
 float diff = abs(b1 - b2);
 
-if (diff > threshold) {
+if (diff  threshold) {
   whiteCount++;
 }
 ```
 
-### `int index = x + y * cam.width;`
+### `int index = x + y  cam.width;`
 
-* converts 2D coordinates `(x, y)` into a 1D array position,
-* because pixel arrays are stored as one long line of values.
+ converts 2D coordinates `(x, y)` into a 1D array position,
+ because pixel arrays are stored as one long line of values.
 
 ### `color c1 = cam.pixels[index];`
 
-* gets the current frame pixel at that position.
+ gets the current frame pixel at that position.
 
 ### `color c2 = prevFrame.pixels[index];`
 
-* gets the previous frame pixel at the same position.
+ gets the previous frame pixel at the same position.
 
 ### `float b1 = brightness(c1);`
 
-* measures how bright the current pixel is.
+ measures how bright the current pixel is.
 
 ### `float b2 = brightness(c2);`
 
-* measures how bright the previous pixel was.
+ measures how bright the previous pixel was.
 
 ### `float diff = abs(b1 - b2);`
 
-* computes the size of the brightness change,
-* `abs()` means absolute value, so negative differences become positive.
+ computes the size of the brightness change,
+ `abs()` means absolute value, so negative differences become positive.
 
-### `if (diff > threshold) { whiteCount++; }`
+### `if (diff  threshold) { whiteCount++; }`
 
-* if the change is big enough, count this pixel as motion.
+ if the change is big enough, count this pixel as motion.
 
 This sequence is the real motion detector.
 
@@ -1051,24 +1051,24 @@ This sequence is the real motion detector.
 ## Important Part 3 — Converting motion to feature history
 
 ```java
-motionAmount = ((float)whiteCount / (float)sampledCount)*4;
+motionAmount = ((float)whiteCount  (float)sampledCount)4;
 updateMotionBuffer(motionAmount);
 sendBufferToWekinator();
 ```
 
-### `motionAmount = ((float)whiteCount / (float)sampledCount)*4;`
+### `motionAmount = ((float)whiteCount  (float)sampledCount)4;`
 
-* turns raw counts into a normalized motion measurement,
-* `float` casts prevent integer division,
-* multiplying by 4 scales the result.
+ turns raw counts into a normalized motion measurement,
+ `float` casts prevent integer division,
+ multiplying by 4 scales the result.
 
 ### `updateMotionBuffer(motionAmount);`
 
-* inserts the current motion amount into the history array.
+ inserts the current motion amount into the history array.
 
 ### `sendBufferToWekinator();`
 
-* sends the full 30-value time history to Wekinator.
+ sends the full 30-value time history to Wekinator.
 
 This is the transition from raw computer vision to machine-learning-ready input.
 
@@ -1078,102 +1078,102 @@ This is the transition from raw computer vision to machine-learning-ready input.
 
 ## `Capture cam`
 
-* **stores:** the live webcam stream,
-* **why it exists:** to access current video frames,
-* **how it changes:** it updates whenever new camera frames arrive,
-* **where used:** `setup()`, `captureEvent()`, `draw()`,
-* **type of data:** input.
+ stores the live webcam stream,
+ why it exists to access current video frames,
+ how it changes it updates whenever new camera frames arrive,
+ where used `setup()`, `captureEvent()`, `draw()`,
+ type of data input.
 
 ## `PImage prevFrame`
 
-* **stores:** the previous frame image,
-* **why it exists:** motion detection needs a frame from the past,
-* **how it changes:** replaced every draw cycle with the latest frame copy,
-* **where used:** `draw()`,
-* **type of data:** intermediate data.
+ stores the previous frame image,
+ why it exists motion detection needs a frame from the past,
+ how it changes replaced every draw cycle with the latest frame copy,
+ where used `draw()`,
+ type of data intermediate data.
 
 ## `OscP5 oscP5`
 
-* **stores:** OSC communication manager,
-* **why it exists:** to create/send OSC messages,
-* **how it changes:** mainly stays the same after setup,
-* **where used:** `setup()`, `sendBufferToWekinator()`,
-* **type of data:** communication object.
+ stores OSC communication manager,
+ why it exists to createsend OSC messages,
+ how it changes mainly stays the same after setup,
+ where used `setup()`, `sendBufferToWekinator()`,
+ type of data communication object.
 
 ## `NetAddress wekinator`
 
-* **stores:** IP address and port of Wekinator,
-* **why it exists:** tells OSC where to send data,
-* **how it changes:** usually constant,
-* **where used:** `setup()`, `sendBufferToWekinator()`,
-* **type of data:** output destination info.
+ stores IP address and port of Wekinator,
+ why it exists tells OSC where to send data,
+ how it changes usually constant,
+ where used `setup()`, `sendBufferToWekinator()`,
+ type of data output destination info.
 
 ## `String wekHost`
 
-* **stores:** host address,
-* **value here:** `127.0.0.1`,
-* **meaning:** same computer.
+ stores host address,
+ value here `127.0.0.1`,
+ meaning same computer.
 
 ## `int wekPort`
 
-* **stores:** target port number,
-* **value here:** `6448`,
-* **meaning:** Wekinator’s OSC input port.
+ stores target port number,
+ value here `6448`,
+ meaning Wekinator’s OSC input port.
 
 ## `String oscAddress`
 
-* **stores:** OSC message address,
-* **value here:** `/wek/inputs`,
-* **meaning:** tells Wekinator what kind of OSC message this is.
+ stores OSC message address,
+ value here `wekinputs`,
+ meaning tells Wekinator what kind of OSC message this is.
 
 ## `int localPort`
 
-* **stores:** Processing’s local OSC port,
-* **why it exists:** required for OSC setup.
+ stores Processing’s local OSC port,
+ why it exists required for OSC setup.
 
 ## `float threshold`
 
-* **stores:** the minimum brightness difference needed to count as motion,
-* **how it changes:** constant unless you edit the code,
-* **type of data:** control parameter.
+ stores the minimum brightness difference needed to count as motion,
+ how it changes constant unless you edit the code,
+ type of data control parameter.
 
 ## `float motionAmount`
 
-* **stores:** the current frame’s motion measure,
-* **how it changes:** recalculated every `draw()`,
-* **where used:** HUD, buffer update, graph indirectly,
-* **type of data:** extracted feature.
+ stores the current frame’s motion measure,
+ how it changes recalculated every `draw()`,
+ where used HUD, buffer update, graph indirectly,
+ type of data extracted feature.
 
 ## `int bufferSize`
 
-* **stores:** number of history values to keep,
-* **value here:** 30,
-* **meaning:** 30 features will be sent.
+ stores number of history values to keep,
+ value here 30,
+ meaning 30 features will be sent.
 
 ## `float[] motionBuffer`
 
-* **stores:** last 30 motion values,
-* **how it changes:** values shift left and new value goes at the end,
-* **where used:** OSC sending and graph drawing,
-* **type of data:** feature vector / temporal history.
+ stores last 30 motion values,
+ how it changes values shift left and new value goes at the end,
+ where used OSC sending and graph drawing,
+ type of data feature vector  temporal history.
 
 ## `boolean mirror`
 
-* **stores:** whether to mirror the displayed webcam image,
-* **where used:** display section inside `draw()`,
-* **type of data:** interface setting.
+ stores whether to mirror the displayed webcam image,
+ where used display section inside `draw()`,
+ type of data interface setting.
 
 ## `int whiteCount`
 
-* **stores:** number of pixels whose change exceeds threshold,
-* **how it changes:** reset every frame,
-* **type of data:** intermediate motion count.
+ stores number of pixels whose change exceeds threshold,
+ how it changes reset every frame,
+ type of data intermediate motion count.
 
 ## `int sampledCount`
 
-* **stores:** total number of compared pixels,
-* **how it changes:** reset every frame,
-* **type of data:** intermediate normalization count.
+ stores total number of compared pixels,
+ how it changes reset every frame,
+ type of data intermediate normalization count.
 
 ---
 
@@ -1193,7 +1193,7 @@ Once at startup.
 
 No explicit input arguments.
 
-### Output/effect
+### Outputeffect
 
 Creates the operating environment for the sketch.
 
@@ -1217,7 +1217,7 @@ Automatically when the camera has a new frame ready.
 
 `Capture c` — the capture object triggering the event.
 
-### Output/effect
+### Outputeffect
 
 Updates camera data used by the sketch.
 
@@ -1231,14 +1231,14 @@ Ensures live video actually refreshes.
 
 ### What it does
 
-Performs the entire live cycle:
+Performs the entire live cycle
 
-* read pixels,
-* compare frames,
-* calculate motion,
-* update buffer,
-* send OSC,
-* draw interface.
+ read pixels,
+ compare frames,
+ calculate motion,
+ update buffer,
+ send OSC,
+ draw interface.
 
 ### When it runs
 
@@ -1248,7 +1248,7 @@ Continuously.
 
 No explicit arguments, but it uses global variables and current camera state.
 
-### Output/effect
+### Outputeffect
 
 Produces graphics and sends data to Wekinator.
 
@@ -1272,7 +1272,7 @@ Once per frame from `draw()`.
 
 `value` — the newest motion amount.
 
-### Output/effect
+### Outputeffect
 
 Updates temporal feature memory.
 
@@ -1296,7 +1296,7 @@ Once per frame from `draw()`.
 
 Uses `motionBuffer`, `oscAddress`, `wekinator`.
 
-### Output/effect
+### Outputeffect
 
 Sends 30 floats to Wekinator.
 
@@ -1320,7 +1320,7 @@ Once per frame from `draw()`.
 
 Uses global values such as `motionAmount`, `wekHost`, `wekPort`, `bufferSize`.
 
-### Output/effect
+### Outputeffect
 
 Shows status information visually.
 
@@ -1344,7 +1344,7 @@ Once per frame from `draw()`.
 
 Uses `motionBuffer` and window dimensions.
 
-### Output/effect
+### Outputeffect
 
 Shows the recent motion history graphically.
 
@@ -1358,35 +1358,35 @@ Helps you visually understand what Wekinator is receiving.
 
 ## How decisions are made
 
-The main decision is here:
+The main decision is here
 
 ```java
-if (diff > threshold)
+if (diff  threshold)
 ```
 
 This decides whether a pixel changed enough to count as motion.
 
-So the logic is:
+So the logic is
 
-* compare brightness now vs before,
-* if change is small → ignore,
-* if change is big → count as movement.
+ compare brightness now vs before,
+ if change is small → ignore,
+ if change is big → count as movement.
 
 ## How loops work
 
-The sketch uses nested loops:
+The sketch uses nested loops
 
 ```java
-for (int y = 0; y < cam.height; y++) {
-  for (int x = 0; x < cam.width; x++) {
+for (int y = 0; y  cam.height; y++) {
+  for (int x = 0; x  cam.width; x++) {
 ```
 
 A nested loop means one loop inside another.
 
-This makes the program examine **every pixel** in the frame.
+This makes the program examine every pixel in the frame.
 
-* outer loop goes row by row,
-* inner loop goes across each pixel in that row.
+ outer loop goes row by row,
+ inner loop goes across each pixel in that row.
 
 ## How comparisons work
 
@@ -1397,17 +1397,17 @@ It is simply checking image change over time.
 
 ## How motion is calculated
 
-The code does **frame differencing**.
-Frame differencing means:
+The code does frame differencing.
+Frame differencing means
 
-* take current frame,
-* take previous frame,
-* compare them,
-* large changes suggest motion.
+ take current frame,
+ take previous frame,
+ compare them,
+ large changes suggest motion.
 
 ## Why brightness is used instead of full color difference
 
-The code uses:
+The code uses
 
 ```java
 brightness(c1)
@@ -1421,24 +1421,24 @@ That is easier and cheaper than comparing red, green, and blue separately.
 
 Threshold = sensitivity.
 
-* smaller threshold → more sensitive,
-* larger threshold → less sensitive.
+ smaller threshold → more sensitive,
+ larger threshold → less sensitive.
 
 If threshold is 30, then only brightness differences above 30 are counted.
 
 ## What the formula means
 
 ```java
-motionAmount = ((float)whiteCount / (float)sampledCount)*4;
+motionAmount = ((float)whiteCount  (float)sampledCount)4;
 ```
 
-This means:
+This means
 
 1. count changed pixels,
 2. divide by total pixels,
 3. scale the result.
 
-So the final number expresses **how much of the image is moving**.
+So the final number expresses how much of the image is moving.
 
 ## What the temporal buffer means logically
 
@@ -1446,12 +1446,12 @@ The buffer turns a single snapshot into a short motion history.
 
 This matters because many gestures are temporal, meaning they happen across time.
 
-Examples:
+Examples
 
-* a quick hand raise,
-* a repeated wave,
-* staying still,
-* shaking fast,
+ a quick hand raise,
+ a repeated wave,
+ staying still,
+ shaking fast,
 
 may have similar single-frame motion values but very different sequences over 30 frames.
 
@@ -1459,38 +1459,38 @@ may have similar single-frame motion values but very different sequences over 30
 
 # 8. WHAT I WILL SEE WHEN I RUN IT
 
-When you run the sketch, you should expect the following:
+When you run the sketch, you should expect the following
 
 ## On screen
 
-You will see:
+You will see
 
-* a large window,
-* your webcam feed filling the window,
-* probably mirrored horizontally if `mirror` is true,
-* a dark information box at the top-left,
-* a graph near the bottom-left showing recent motion values.
+ a large window,
+ your webcam feed filling the window,
+ probably mirrored horizontally if `mirror` is true,
+ a dark information box at the top-left,
+ a graph near the bottom-left showing recent motion values.
 
 ## In the HUD
 
-You should see text such as:
+You should see text such as
 
-* OSC destination host and port,
-* OSC address `/wek/inputs`,
-* current motion amount,
-* number of features sent, which is 30.
+ OSC destination host and port,
+ OSC address `wekinputs`,
+ current motion amount,
+ number of features sent, which is 30.
 
 ## If you stay still
 
-* `motionAmount` should stay low,
-* the graph should be near the bottom,
-* Wekinator will receive small values.
+ `motionAmount` should stay low,
+ the graph should be near the bottom,
+ Wekinator will receive small values.
 
 ## If you move a lot
 
-* `motionAmount` will rise,
-* the graph will jump upward,
-* Wekinator will receive larger buffer values.
+ `motionAmount` will rise,
+ the graph will jump upward,
+ Wekinator will receive larger buffer values.
 
 ## In the background
 
@@ -1505,14 +1505,14 @@ So even though you only see one graph, behind the scenes the sketch is continuou
 
 Let us explain the sketch as a real working system.
 
-* **This part opens the camera**: `cam = new Capture(this, cameras[0]); cam.start();`
-* **This part receives fresh webcam frames**: `captureEvent(Capture c) { c.read(); }`
-* **This part compares current frame with previous frame**: the nested loops in `draw()`.
-* **This part calculates motion amount**: `motionAmount = ((float)whiteCount / (float)sampledCount)*4;`
-* **This part remembers recent motion over time**: `motionBuffer` plus `updateMotionBuffer()`.
-* **This part sends values to Wekinator**: `sendBufferToWekinator()`.
-* **This part draws the graph**: `drawBufferPreview()`.
-* **This part shows status text**: `drawHUD()`.
+ This part opens the camera `cam = new Capture(this, cameras[0]); cam.start();`
+ This part receives fresh webcam frames `captureEvent(Capture c) { c.read(); }`
+ This part compares current frame with previous frame the nested loops in `draw()`.
+ This part calculates motion amount `motionAmount = ((float)whiteCount  (float)sampledCount)4;`
+ This part remembers recent motion over time `motionBuffer` plus `updateMotionBuffer()`.
+ This part sends values to Wekinator `sendBufferToWekinator()`.
+ This part draws the graph `drawBufferPreview()`.
+ This part shows status text `drawHUD()`.
 
 So in practical terms, this sketch is like a sensor translator.
 The webcam is the raw sensor.
@@ -1523,82 +1523,82 @@ Then it transforms that movement into 30 numerical features for machine learning
 
 # 10. Probable Questions a Student Might Ask
 
-## 1. Why do we need both `setup()` and `draw()`?
+## 1. Why do we need both `setup()` and `draw()`
 
 `setup()` is for things that should happen once, such as starting the camera.
 `draw()` is for things that must repeat continuously, such as measuring motion and updating the screen.
 
-## 2. Why do we need a previous frame?
+## 2. Why do we need a previous frame
 
 Motion means change over time.
 With only one frame, you only know what the image looks like now.
 With two frames, you can detect what changed.
 
-## 3. Why is `motionBuffer` an array?
+## 3. Why is `motionBuffer` an array
 
 Because the sketch stores many motion values, not just one.
 An array is a structure that holds multiple values of the same type.
 Here it holds 30 floats.
 
-## 4. Why are there 30 inputs instead of 1?
+## 4. Why are there 30 inputs instead of 1
 
 Because 30 inputs carry temporal information.
 One number tells only the current amount of motion.
 Thirty numbers tell the recent motion pattern over time.
 That is much more informative for Wekinator.
 
-## 5. Why do we compare brightness instead of full color?
+## 5. Why do we compare brightness instead of full color
 
 Brightness makes the comparison simpler and cheaper.
 It reduces each pixel to one value.
 That is often enough for basic motion detection.
 
-## 6. What does the threshold do?
+## 6. What does the threshold do
 
 It decides what size of pixel change counts as meaningful motion.
 Small differences below the threshold are ignored.
 
-## 7. Why do we normalize by dividing by `sampledCount`?
+## 7. Why do we normalize by dividing by `sampledCount`
 
 Because otherwise the motion count would depend on image size.
 Normalization turns the result into a proportion of changed pixels.
 
-## 8. Why multiply by 4?
+## 8. Why multiply by 4
 
 To amplify the motion signal.
 This can make the values more responsive for visualization or machine learning.
 But it also means the value may go above 1.
 
-## 9. What is OSC?
+## 9. What is OSC
 
 OSC stands for Open Sound Control.
 It is a messaging format used to send numbers and other data between programs in real time.
 
-## 10. Is Processing doing machine learning here?
+## 10. Is Processing doing machine learning here
 
 No.
 Processing is only extracting features and sending them.
 Wekinator is the system that learns from those features.
 
-## 11. What exactly is sent to Wekinator?
+## 11. What exactly is sent to Wekinator
 
 A single OSC message containing 30 float values.
 Those 30 values are the last 30 motion amounts stored in `motionBuffer`.
 
-## 12. Why is the camera image mirrored?
+## 12. Why is the camera image mirrored
 
 Only for user comfort.
 It makes the display feel more natural, like a mirror.
 
-## 13. Why do we call `cam.loadPixels()` and `prevFrame.loadPixels()`?
+## 13. Why do we call `cam.loadPixels()` and `prevFrame.loadPixels()`
 
 Because before reading pixel arrays, Processing needs to make sure pixel data is loaded and available.
 
-## 14. What happens on the first frame?
+## 14. What happens on the first frame
 
 There is no previous frame yet, so the sketch saves the current frame and skips motion calculation once.
 
-## 15. What does `return` do in that first-frame block?
+## 15. What does `return` do in that first-frame block
 
 It stops the current `draw()` function immediately so the code does not continue into invalid comparison logic.
 
@@ -1621,7 +1621,7 @@ Wekinator is the one that learns from training examples.
 ## Confusion 3 — “30 inputs means 30 images are sent.”
 
 No.
-The sketch is **not** sending 30 whole images.
+The sketch is not sending 30 whole images.
 It is sending 30 numbers.
 Each number is one motion amount from one recent frame.
 
@@ -1639,7 +1639,7 @@ This is not object recognition.
 ## Confusion 6 — “`motionAmount` is always between 0 and 1.”
 
 Not necessarily.
-Because of `*4`, it can exceed 1.
+Because of `4`, it can exceed 1.
 That is important.
 
 ## Confusion 7 — “The graph always fits perfectly.”
@@ -1670,63 +1670,63 @@ Yes, this code is related to Wekinator.
 
 ## Role of Processing
 
-Processing is responsible for:
+Processing is responsible for
 
-* opening the webcam,
-* comparing frames,
-* calculating motion features,
-* building a temporal buffer,
-* sending those numbers through OSC.
+ opening the webcam,
+ comparing frames,
+ calculating motion features,
+ building a temporal buffer,
+ sending those numbers through OSC.
 
-So Processing is the **feature extraction and communication side**.
+So Processing is the feature extraction and communication side.
 
 ## Role of Wekinator
 
-Wekinator is responsible for:
+Wekinator is responsible for
 
-* receiving the 30 input values,
-* associating them with training examples and output labels or targets,
-* learning a mapping from input features to outputs,
-* making predictions later.
+ receiving the 30 input values,
+ associating them with training examples and output labels or targets,
+ learning a mapping from input features to outputs,
+ making predictions later.
 
-So Wekinator is the **machine learning side**.
+So Wekinator is the machine learning side.
 
 ## What Processing is extracting or sending
 
-Processing extracts:
+Processing extracts
 
-* one motion amount per frame,
-* based on brightness change between current and previous frame.
+ one motion amount per frame,
+ based on brightness change between current and previous frame.
 
-Then it sends:
+Then it sends
 
-* the last 30 motion amounts,
-* as a 30-dimensional feature vector.
+ the last 30 motion amounts,
+ as a 30-dimensional feature vector.
 
 ## How many inputs and outputs this code implies
 
 ### Inputs to Wekinator
 
-This code implies:
+This code implies
 
-* **30 inputs** to Wekinator.
+ 30 inputs to Wekinator.
 
 Because `bufferSize = 30`, and all 30 values are added to the OSC message.
 
 ### Outputs
 
-This code does **not** define the machine learning outputs.
+This code does not define the machine learning outputs.
 The outputs are decided in Wekinator when you create the project.
 
-For example, Wekinator could be configured for:
+For example, Wekinator could be configured for
 
-* **classification**: such as still / wave / shake,
-* **regression**: such as one continuous control value,
-* **multiple outputs**: such as controlling sound parameters.
+ classification such as still  wave  shake,
+ regression such as one continuous control value,
+ multiple outputs such as controlling sound parameters.
 
-## Is this code doing classification, regression, or only feature extraction?
+## Is this code doing classification, regression, or only feature extraction
 
-This code itself is doing **only feature extraction and transmission**.
+This code itself is doing only feature extraction and transmission.
 
 It is not classifying.
 It is not regressing.
@@ -1744,7 +1744,7 @@ This sketch opens a webcam and compares each new frame to the previous one. It c
 
 ## One-paragraph conceptual summary
 
-Conceptually, this sketch is a bridge between live video and machine learning. Instead of sending the full webcam image to Wekinator, it reduces the image to a much simpler description: how much motion is happening over time. Each frame produces one motion number, and the last 30 numbers form a short temporal pattern. That pattern becomes the machine-learning input. So the sketch is really a feature-extraction system that converts raw movement into a learnable time-series of 30 values.
+Conceptually, this sketch is a bridge between live video and machine learning. Instead of sending the full webcam image to Wekinator, it reduces the image to a much simpler description how much motion is happening over time. Each frame produces one motion number, and the last 30 numbers form a short temporal pattern. That pattern becomes the machine-learning input. So the sketch is really a feature-extraction system that converts raw movement into a learnable time-series of 30 values.
 
 ## One-sentence summary of the code’s purpose
 
@@ -1754,17 +1754,17 @@ This code measures webcam motion over time and sends the last 30 motion values t
 
 # 14. TEACHING NOTES ON IMPORTANT IDEAS
 
-Here are a few especially important conceptual translations:
+Here are a few especially important conceptual translations
 
-* `prevFrame` means “what the camera looked like one moment ago.”
-* `threshold` means “how big a change must be before we care.”
-* `motionAmount` means “how much of the image seems to be moving right now.”
-* `motionBuffer` means “the recent history of motion.”
-* `sendBufferToWekinator()` means “send that history as machine-learning input.”
+ `prevFrame` means “what the camera looked like one moment ago.”
+ `threshold` means “how big a change must be before we care.”
+ `motionAmount` means “how much of the image seems to be moving right now.”
+ `motionBuffer` means “the recent history of motion.”
+ `sendBufferToWekinator()` means “send that history as machine-learning input.”
 
-A very good mental model is this:
+A very good mental model is this
 
-> The webcam gives raw images. Processing compresses those images into motion numbers. Wekinator learns patterns from those numbers.
+ The webcam gives raw images. Processing compresses those images into motion numbers. Wekinator learns patterns from those numbers.
 
 ---
 
@@ -1772,9 +1772,9 @@ A very good mental model is this:
 
 ## The 3 most important ideas you must understand from this code
 
-1. **Motion is detected by comparing the current frame to the previous frame.**
-2. **The sketch sends 30 recent motion values, not full images, to Wekinator.**
-3. **Processing extracts features; Wekinator learns from them.**
+1. Motion is detected by comparing the current frame to the previous frame.
+2. The sketch sends 30 recent motion values, not full images, to Wekinator.
+3. Processing extracts features; Wekinator learns from them.
 
 ## The 3 most important lines or code blocks
 
@@ -1787,18 +1787,18 @@ if (prevFrame == null) {
 }
 ```
 
-Why important: without this, motion comparison cannot start safely.
+Why important without this, motion comparison cannot start safely.
 
 ### 2. Pixel difference logic
 
 ```java
 float diff = abs(b1 - b2);
-if (diff > threshold) {
+if (diff  threshold) {
   whiteCount++;
 }
 ```
 
-Why important: this is the core motion detection rule.
+Why important this is the core motion detection rule.
 
 ### 3. Buffer-to-Wekinator pipeline
 
@@ -1807,19 +1807,19 @@ updateMotionBuffer(motionAmount);
 sendBufferToWekinator();
 ```
 
-Why important: this is where motion becomes machine-learning input.
+Why important this is where motion becomes machine-learning input.
 
 ## The 3 best follow-up questions you should ask next
 
-1. How exactly does Wekinator interpret these 30 inputs during training and prediction?
-2. How could we improve this motion detector so it tracks where motion happens, not just how much?
-3. How would the behavior change if we used color difference, downsampling, or a different buffer size?
+1. How exactly does Wekinator interpret these 30 inputs during training and prediction
+2. How could we improve this motion detector so it tracks where motion happens, not just how much
+3. How would the behavior change if we used color difference, downsampling, or a different buffer size
 
 ---
 
 # One extra important observation as your professor
 
-There are two small issues in the code/comments that are good learning opportunities:
+There are two small issues in the codecomments that are good learning opportunities
 
 1. The comment says the motion value is normalized to `0..1`, but because the code multiplies by `4`, the value can go above `1`.
 2. The graph maps y-values from `0` to `1`, so if motion is stronger than `1`, the preview may not represent it perfectly.
@@ -1828,4 +1828,4 @@ That does not make the sketch useless. It simply means the code is a great examp
 
 ---
 
-If you want, the next best study step is to ask for a **line-by-line beginner walkthrough of only the `draw()` function**, because that is where most of the real logic lives.
+If you want, the next best study step is to ask for a line-by-line beginner walkthrough of only the `draw()` function, because that is where most of the real logic lives.
