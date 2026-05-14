@@ -1,0 +1,68 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{todonotes}
+\setcounter{section}{3}
+\title{Music and multimedia streaming over the Internet - Lab 4}
+\author{your names here}
+
+\begin{document}
+
+\maketitle
+\newpage
+\section{Deliveries}
+\subsection{Ping}
+\subsubsection{To known IP address} \label{sec:ip-ping}
+\begin{enumerate}
+    \item Chosen IP:
+    \item Exact command issued:
+    \item List of protocols involved:
+\end{enumerate}
+Choose an Echo Request or an Echo Reply packet and show:
+\begin{enumerate}
+    \item Packet type (Request or Reply):
+    \item Source IP address: 
+    \item Destination IP address:
+\end{enumerate}
+\subsubsection{To named host}
+\begin{enumerate}
+    \item Chosen host name:
+    \item Exact command issued:
+    \item IP address of the chosen host:
+    \item Describe the additional packet types observed with respect to exercise \ref{sec:ip-ping}:
+\end{enumerate}
+\subsection{Netcat}
+\subsubsection{TCP}
+\begin{enumerate}
+    \item Report the commands used to run both the Netcat client and the Netcat server
+    \begin{itemize}
+        \item Server:
+        \item Client:
+    \end{itemize}
+    \item Identify the packets used to initiate and close the TCP connection. Provide a screenshot or a list of them:
+    \item Write here the source port of the packets going in the direction client $\rightarrow$ server:
+\end{enumerate}
+\subsubsection{UDP}
+\begin{enumerate}
+    \item Report the commands used to run both the Netcat client and the Netcat server
+    \begin{itemize}
+        \item Server:
+        \item Client:
+    \end{itemize}
+    \item What is the main difference in the number of packets when using UDP instead of TCP? Which packets are new, and which ones are missing?
+    \item What are the differences between a TCP and a UDP packet? Could you briefly explain why?
+    \item Do you notice any strange behavior in the order of the packets?
+\end{enumerate}
+\subsection{Web}
+\subsubsection{HTTP Server}
+\begin{enumerate}
+    \item Briefly report the type of packets observed in Wireshark
+    \item Could you find the username and password typed in the browser among the packets?
+    \item If so, where? If not, why?
+\end{enumerate}
+\subsubsection{HTTPs Server}
+\begin{enumerate}
+    \item Briefly report the type of packets observed in Wireshark
+    \item Could you find the username and password typed in the browser among the packets?
+    \item If so, where? If not, why?
+\end{enumerate}
+\end{document}
